@@ -1,0 +1,76 @@
+SƠ ĐỒ DỰ ÁN: bbshop  (chuẩn để copy vào: C:\Users\Admin\OneDrive\Desktop\bbshop)
+
+┌─ bbshop\
+│  ├─ bbs.py                 # Bot chính (polling), icon rõ, menu 2 cột, tiếng Việt
+│  ├─ webhook.py             # (Tuỳ chọn) Chạy bot bằng webhook với SECRET_TOKEN + WEBHOOK_BASE
+│  ├─ bank.py                # Hàm gửi VietQR (API vietqr.io), tạo ảnh QR + lưu lịch sử xác nhận
+│  ├─ PRODUCT_MAP.py         # Tổng hợp sản phẩm từ thư mục products + UI_DEFAULTS (nút chung)
+│  ├─ products\              # Mỗi sản phẩm 1 file, dễ sửa giá/nhãn/mô tả/nút
+│  │  ├─ __init__.py
+│  │  ├─ capcut.py           # CapCut Pro (12 tháng = 399.000đ, 1 thiết bị) + UI riêng
+│  │  ├─ telegram_premium.py # Telegram Premium (3/6/12 tháng)
+│  │  ├─ canva.py            # Canva Pro (1/3/12 tháng)
+│  │  ├─ adobe_all.py        # Adobe All Apps (12 tháng)
+│  │  └─ chatgpt_plus.py     # ChatGPT Plus (1 tháng)
+│  ├─ requirements.txt       # Thư viện cần cài
+│  └─ .env.example           # Mẫu biến môi trường (giữ nguyên tên biến hiện tại)
+│
+└─ (khi chạy sẽ phát sinh)
+   ├─ users.json             # Lưu thông tin user (số dư, đơn hàng)
+   ├─ orders.json            # Lưu đơn hàng
+   └─ payment_history.json   # Lịch sử bấm "Đã chuyển khoản"
+
+───────────────────────────────────────────────────────────────────────────────
+1) THƯ VIỆN (requirements.txt)
+   - python-telegram-bot[http2]==20.7
+   - python-dotenv
+   - requests
+   - uvloop (tự tắt trên Windows)
+
+2) BIẾN MÔI TRƯỜNG (.env)
+   # Token & Webhook
+   boi2=YOUR_TELEGRAM_BOT_TOKEN
+   SECRET_TOKEN=change-me-secret
+   WEBHOOK_BASE=https://your-domain.tld
+   PORT=8080
+
+   # VietQR (giữ nguyên tên biến)
+   VIETQR_CLIENT_ID=...
+   VIETQR_API_KEY=...
+   ACCOUNT_NO=074659603
+   ACCOUNT_NAME=HOANG GIA BAO
+   ACQ_ID=970441
+   VIETQR_TEMPLATE=compact2
+
+3) DÒNG CHẢY CHÍNH (flow)
+   /start
+     → bbs.py: start() hiển thị menu 2 cột: [🛒 Mua hàng | 💳 Nạp tiền] / [🔎 Thông tin | 📖 Hướng dẫn] / [☎️ Hỗ trợ | 🏪 Kênh Shop]
+     → "🛒 Mua hàng" → show_buy_menu(): tạo danh sách sản phẩm từ PRODUCT_MAP (2 cột)
+     → "Sản phẩm X" → show_product_plans(): hiển thị mô tả + các gói (2 cột), text lấy từ sản phẩm + UI_DEFAULTS
+     → "buy_<key>_<months>" → buy_menu_callback(): xác nhận mua, hiển thị giá & nút [✅ Xác nhận mua | 💳 Nạp tiền] + [« Quay lại | 🏠 Trang chủ]
+     → "topup" → bank.py: send_vietqr(): tạo ảnh QR từ vietqr.io, gửi ảnh + nút "✅ Đã chuyển khoản"
+     → "confirm_payment_<add_info>" → save_payment_history()
+
+4) NƠI SỬA NỘI DUNG
+   - Sản phẩm (tên, mô tả, giá, nhãn gói): products\<tên_sản_phẩm>.py
+   - UI mặc định (nút chung): PRODUCT_MAP.py → UI_DEFAULTS
+     (buy_now, topup, back, home, plans_prompt). Mỗi sản phẩm có thể override trong trường "ui".
+   - Menu chính / icon / text: bbs.py (hàm main_kb(), start(), guide())
+
+5) CHẠY BOT
+   - Polling (đơn giản nhất):
+       cd C:\Users\Admin\OneDrive\Desktop\bbshop
+       py -m pip install -r requirements.txt
+       Copy .env.example thành .env và điền giá trị thật
+       py bbs.py
+   - Webhook (domain/https):
+       Điền SECRET_TOKEN + WEBHOOK_BASE, sau đó:
+       py webhook.py
+
+6) GHI CHÚ / BEST PRACTICES
+   - bbs.py đã xóa webhook khi chạy polling (post_init), tránh trùng mode.
+   - bank.py có fallback nếu template VietQR bị báo lỗi, và log rõ ràng.
+   - Nút luôn chia 2 cột ở menu & chọn gói → UI nhất quán.
+   - Code tiếng Việt, comment ngắn gọn, dễ tìm vị trí cần sửa.
+
+END.
