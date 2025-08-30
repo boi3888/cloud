@@ -3,7 +3,7 @@ PRODUCT_MAP — tổng hợp sản phẩm từ các module trong thư mục `pro
 Bạn có thể sửa UI chung ở UI_DEFAULTS hoặc override trong từng file sản phẩm.
 """
 from typing import Dict, Any
-from products import capcut, telegram_premium, canva, adobe_all, chatgpt_plus
+from products import capcut, telegram_premium, canva, adobe_all, chatgpt_plus, gemini_pro
 
 UI_DEFAULTS = {
     "buy_now": "✅ Xác nhận mua",
@@ -26,4 +26,5 @@ PRODUCT_MAP: Dict[str, Any] = {
     canva.KEY:            with_ui_defaults(canva.get_product()),
     adobe_all.KEY:        with_ui_defaults(adobe_all.get_product()),
     chatgpt_plus.KEY:     with_ui_defaults(chatgpt_plus.get_product()),
+    gemini_pro.KEY:       with_ui_defaults(gemini_pro.get_product()),
 }
