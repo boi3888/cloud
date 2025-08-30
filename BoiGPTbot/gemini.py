@@ -12,7 +12,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 # Khởi tạo Gemini
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-2.0-flash-exp')
+    model = genai.GenerativeModel('gemini-pro')  # Gemini Pro 2.5
 else:
     model = None
     logger.warning("GEMINI_API_KEY không được cấu hình")
